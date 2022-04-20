@@ -1,25 +1,42 @@
-document.getElementById('deposit-button').addEventListener('click',function(){
-    const currentDepositId = document.getElementById('user-deposit');
-    const currentDepositText = currentDepositId.value;
-    const currentDepositAmount = parseFloat(currentDepositText);
-    
-    // ====previous deposite==
+function getInputValue(nameOfId){
+    const currentId = document.getElementById(nameOfId);
+    const currentText = currentId.value;
+    const currentAmount = parseFloat(currentText);
+    currentId.value ='';
+    return currentAmount;
+}
 
-    const previousDepositeId = document.getElementById('update-deposite');
-    const previousDepositeText = previousDepositeId.innerText;
-    const previousDepositeAmount = parseFloat(previousDepositeText);
+function updateAmount(updateId,currentAmount){
+    const previousId = document.getElementById(updateId);
+    const previousText = previousId.innerText;
+    const previousAmount = parseFloat(previousText);
     // ==== update deposite amount 
-    const updateAmount = currentDepositAmount + previousDepositeAmount;
-    previousDepositeId.innerText = updateAmount;
-    currentDepositId.value ='';
+    const updateAmount = currentAmount + previousAmount;
+    previousId.innerText = updateAmount;
+}
 
-    // *** Balence ***
+
+function updateBalance(currentAmount,isTrue){
     const balanceId = document.getElementById('user-balance');
     const balanceText = balanceId.innerText;
     const balanceAmount = parseFloat(balanceText);
-    // *** update Balance 
-    const updateBalanceAmount = balanceAmount + currentDepositAmount;
+    if(isTrue == true){
+        const updateBalanceAmount = balanceAmount + currentAmount;
     balanceId.innerText = updateBalanceAmount;
+    }
+    else{
+        const updateBalanceAmount = balanceAmount - currentAmount;
+    balanceId.innerText = updateBalanceAmount;
+    }
+    
+}
+document.getElementById('deposit-button').addEventListener('click',function(){
+    const currentDepositAmount = getInputValue('user-deposit');
+    // *** UPDATE AMMOUNT ***
+    if(currentDepositAmount>0){
+        updateAmount('update-deposite',currentDepositAmount);
+    updateBalance(currentDepositAmount,true);
+    }
     
 })
 
@@ -27,25 +44,19 @@ document.getElementById('deposit-button').addEventListener('click',function(){
 // ============= Withdraw part =============
 
 document.getElementById('withdraw-button').addEventListener('click',function(){
-    const currentWithdrawId = document.getElementById('user-withdraw');
-    const currentWithdrawText = currentWithdrawId.value;
-    const currentWithdrawAmount = parseFloat(currentWithdrawText);
-    
-    // ** previous withdraw
-    const previousWithdrawId = document.getElementById('update-withdraw');
-    const previousWithdrawText = previousWithdrawId.innerText;
-    const previousWithdrawAmount = parseFloat(previousWithdrawText);
-    // *** update withdraw **
-    const updateWithdraw = currentWithdrawAmount + previousWithdrawAmount;
-    previousWithdrawId.innerText = updateWithdraw;
-    currentWithdrawId.value = '';
-
-    // ** withdraw balence update 
     const balanceId = document.getElementById('user-balance');
     const balanceText = balanceId.innerText;
     const balanceAmount = parseFloat(balanceText);
+    const currentWithdrawAmount = getInputValue('user-withdraw');
+    if(currentWithdrawAmount>0 && currentWithdrawAmount< balanceAmount){
+        
+    // *** update withdraw **
+    updateAmount('update-withdraw',currentWithdrawAmount);
 
-    // *** update Balance 
-    const updateBalanceAmount = balanceAmount - currentWithdrawAmount;
-    balanceId.innerText = updateBalanceAmount;
+    // ** withdraw balence update 
+    updateBalance(currentWithdrawAmount,false);
+    }
+    if(currentWithdrawAmount>balanceAmount){
+        alert("you don't have sufficient balance to withdraw");
+    }
 })
